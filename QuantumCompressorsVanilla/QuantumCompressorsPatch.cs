@@ -10,6 +10,7 @@ namespace QuantumCompressors
     [HarmonyPatch(typeof(GeneratedBuildings), "LoadGeneratedBuildings")]
     internal class QuantumCompressorsPreLoad
     {
+        //TODO Find a way to restrict construction of quantum compressors to 1 of each only, on the vanilla base game
         private static void Prefix() 
         {
             QCModUtils.AddStructure("Base", GasQuantumCompressorConfig.ID, GasQuantumCompressorConfig.NAME, GasQuantumCompressorConfig.DESC, GasQuantumCompressorConfig.DESC);
