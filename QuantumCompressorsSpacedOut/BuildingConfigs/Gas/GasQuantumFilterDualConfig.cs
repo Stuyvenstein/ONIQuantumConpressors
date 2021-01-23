@@ -43,21 +43,6 @@ namespace QuantumCompressors.BuildingConfigs.Gas
 			GeneratedBuildings.RegisterWithOverlay(OverlayScreen.GasVentIDs, ID);
 			return buildingDef;
 
-			//BuildingDef buildingDef2 = BuildingTemplates.CreateBuildingDef(ID, 3, 1, "filter_gas_kanim", 30, 10f, BUILDINGS.CONSTRUCTION_MASS_KG.TIER1, MATERIALS.RAW_METALS,
-			//    1600f, BuildLocationRule.Anywhere, BUILDINGS.DECOR.PENALTY.TIER0, TUNING.NOISE_POLLUTION.NOISY.TIER1, 0.2f);
-			//buildingDef2.RequiresPowerInput = true;
-			//buildingDef2.EnergyConsumptionWhenActive = 120f;
-			//buildingDef2.SelfHeatKilowattsWhenActive = 0f;
-			//buildingDef2.ExhaustKilowattsWhenActive = 0f;
-			//buildingDef2.Floodable = false;
-			//buildingDef2.ViewMode = OverlayModes.GasConduits.ID;
-			//buildingDef2.AudioCategory = "Metal";
-			////buildingDef.InputConduitType = ConduitType.Gas;
-			//buildingDef2.OutputConduitType = secondaryPort.conduitType;
-			////buildingDef.UtilityInputOffset = new CellOffset(-1, 0);
-			//buildingDef2.UtilityOutputOffset = secondaryPort.offset;
-			//buildingDef2.PermittedRotations = PermittedRotations.R360;
-			//GeneratedBuildings.RegisterWithOverlay(OverlayScreen.GasVentIDs, ID);
 		}
 
 		public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)

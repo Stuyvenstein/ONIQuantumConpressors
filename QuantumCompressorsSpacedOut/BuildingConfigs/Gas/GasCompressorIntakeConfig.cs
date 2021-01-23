@@ -43,24 +43,6 @@ namespace QuantumCompressors.BuildingConfigs.Gas
 			GeneratedBuildings.RegisterWithOverlay(OverlayScreen.GasVentIDs, ID);
 			return buildingDef;
 
-
-			//BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 1, 2, "valvegas_logic_kanim", 30, 10f, TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER1, MATERIALS.REFINED_METALS, 1600f, BuildLocationRule.Anywhere, TUNING.BUILDINGS.DECOR.PENALTY.TIER0, NOISE_POLLUTION.NOISY.TIER1, 0.2f);
-			//buildingDef.InputConduitType = ConduitType.Gas;
-			////buildingDef.OutputConduitType = ConduitType.Gas;
-			//buildingDef.Floodable = false;
-			//buildingDef.RequiresPowerInput = true;
-			//buildingDef.EnergyConsumptionWhenActive = 10f;
-			//buildingDef.PowerInputOffset = new CellOffset(0, 1);
-			//buildingDef.ViewMode = OverlayModes.GasConduits.ID;
-			//buildingDef.AudioCategory = "Metal";
-			//buildingDef.PermittedRotations = PermittedRotations.R360;
-			//buildingDef.UtilityInputOffset = new CellOffset(0, 0);
-			////buildingDef.UtilityOutputOffset = new CellOffset(0, 1);
-			//List<LogicPorts.Port> list = new List<LogicPorts.Port>();
-			////list.Add(LogicPorts.Port.InputPort(LogicOperationalController.PORT_ID, new CellOffset(0, 0), LOGIC_PORT, LOGIC_PORT_ACTIVE, LOGIC_PORT_INACTIVE, true, false));
-			//buildingDef.LogicInputPorts = list;
-			//GeneratedBuildings.RegisterWithOverlay(OverlayScreen.GasVentIDs, ID);
-			//return buildingDef;
 		}
 
 		public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)

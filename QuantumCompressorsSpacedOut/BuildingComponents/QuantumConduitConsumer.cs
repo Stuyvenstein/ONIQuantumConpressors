@@ -100,24 +100,6 @@ namespace QuantumCompressors.BuildingComponents
                 storage = storageItem.storage;
                 capacityKG = storageItem.storage.capacityKg;
             }
-            //BuildingComplete com = GetComponent<BuildingComplete>();
-            //var qStorGasComp = GameObject.Find("QuantumStorage" + Enum.GetName(typeof(ConduitType), conduitType)+com.GetMyWorldId().ToString());
-            //if (qStorGasComp != null)
-            //{
-            //    var operational = qStorGasComp.GetComponent<Operational>();
-            //    if (operational != null)
-            //    {
-            //        remoteStorageActive = operational.IsOperational;
-            //    }
-            //    if (storage != null && !force) return;
-            //    var storageComp = qStorGasComp.GetComponent<Storage>();
-            //    if (storageComp != null)
-            //    {
-            //        storage = storageComp;
-            //        capacityKG = storage.capacityKg;
-            //    }
-            //}
-            //if (storage == null) Debug.Log("Storage not found for "+nameof(QuantumConduitConsumer));
         }
         protected override void OnCleanUp()
         {
@@ -132,34 +114,6 @@ namespace QuantumCompressors.BuildingComponents
                 return storage;
             }
         }
-        //private Storage FetchRemoteStorage()
-        //{
-        //    Storage result = null;
-        //    switch (conduitType)
-        //    {
-        //        case ConduitType.Gas:
-        //            result= storageSingleton.gasStorage;
-        //            break;
-        //        case ConduitType.Liquid:
-        //            result = storageSingleton.liquidStorage;
-        //            break;
-        //    }
-        //    return result;
-        //}
-        //public bool RemoteStorageAvailable()
-        //{
-        //    bool result = false;
-        //    switch (conduitType)
-        //    {
-        //        case ConduitType.Gas:
-        //            result = storageSingleton.gasStorage != null;
-        //            break;
-        //        case ConduitType.Liquid:
-        //            result = storageSingleton.liquidStorage != null;
-        //            break;
-        //    }
-        //    return result;
-        //}
         #endregion
         public bool CanConsume //something in pipe
         {

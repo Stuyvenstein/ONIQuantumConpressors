@@ -20,9 +20,6 @@ namespace QuantumCompressors.BuildingConfigs.Gas
         private const ConduitType conduitType = ConduitType.Gas;
 
 
-        // .Append(SimHashes.SuperInsulator.ToString()).Append(SimHashes.Polypropylene.ToString()).Append(SimHashes.Steel.ToString());
-        //private ConduitPortInfo outputPort = new ConduitPortInfo(conduitType, new CellOffset(0, 0));
-        //private ConduitPortInfo inputPort = new ConduitPortInfo(conduitType, new CellOffset(1, 2));
         public override BuildingDef CreateBuildingDef()
         {
             //List<string> constrMats = new List<string>();
@@ -59,25 +56,8 @@ namespace QuantumCompressors.BuildingConfigs.Gas
             storage.showCapacityStatusItem = true;
             storage.showCapacityAsMainStatus = true;
             go.AddOrGet<SmartReservoir>();
-            //ConduitConsumer conduitConsumer = go.AddOrGet<ConduitConsumer>();
-            //conduitConsumer.conduitType = conduitType;
-            //conduitConsumer.ignoreMinMassCheck = true;
-            //conduitConsumer.forceAlwaysSatisfied = true;
-            //conduitConsumer.alwaysConsume = true;
-            //conduitConsumer.capacityKG = storage.capacityKg;
             var qs = go.AddOrGet<QuantumStorage>();
             qs.conduitType = conduitType;
-            //QuantumElementFilter elementFilter = go.AddComponent<QuantumElementFilter>();
-            //elementFilter.portInfo = outputPort;
-            //elementFilter.storage = storage;
-            //elementFilter.capacityKG = storage.capacityKg;
-            //elementFilter.alwaysDispense = true;
-
-            //Filterable filterable = go.AddOrGet<Filterable>();
-            //filterable.filterElementState = Filterable.ElementState.Gas;
-            //ConduitDispenser conduitDispenser = go.AddOrGet<ConduitDispenser>();
-            //conduitDispenser.conduitType = conduitType;
-            //conduitDispenser.elementFilter = null;
         }
         public override void DoPostConfigureComplete(GameObject go)
         {
