@@ -10,7 +10,7 @@ namespace QuantumCompressors.BuildingComponents
         private static QuantumStorageSingleton instance;
         private QuantumStorageSingleton() { }
         public List<QuantumStorageItem> StorageItems = new List<QuantumStorageItem>();
-        public BuildingDef gasCompBuildDef, liquidCompBuildDef;
+        public BuildingDef gasCompBuildDef, liquidCompBuildDef, solidCompBuildDef;
         public static QuantumStorageSingleton Get()
         {
             if (instance == null) instance = new QuantumStorageSingleton();

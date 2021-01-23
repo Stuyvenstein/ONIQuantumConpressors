@@ -74,6 +74,7 @@
     <Compile Include="BuildingConfigs\Liquid\LiquidQuantumFilterDualConfig.cs" />
     <Compile Include="BuildingConfigs\Liquid\LiquidQuantumFilterOutletConfig.cs" />
     <Compile Include="BuildingConfigs\Solid\SolidQuantumCompressorConfig.cs" />
+    <Compile Include="BuildingConfigs\Solid\SolidQuantumFilterDualConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QCModUtils.cs" />
     <Compile Include="QuantumCompressorsPatch.cs" />

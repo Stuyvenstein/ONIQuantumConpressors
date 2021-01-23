@@ -188,93 +188,129 @@ namespace QuantumCompressors.BuildingComponents
                 {
                     if (IsInConnected)
                     {
-                        ConduitFlow flowManager = fluidFlowManager;
-                        IsSatisfied = false;
-                        consumedLastTick = true;
-                        ConduitFlow.ConduitContents contents = flowManager.GetContents(inputCell);
-                        if (contents.mass > 0f)
+                        switch (inPortInfo.conduitType)
                         {
-                            IsSatisfied = true;
-                            float consume = consumptionRate * dt;
-                            consume = Mathf.Min(consume, space_remaining_kg);
-                            Element element = ElementLoader.FindElementByHash(contents.element);
-                            //if (contents.element != lastConsumedElement)
-                            //{
-                            //    DiscoveredResources.Instance.Discover(element.tag, element.materialCategory);
-                            //}
-                            float contentMass = 0f;
-                            if (consume > 0f)
-                            {
-                                ConduitFlow.ConduitContents conduitContents = flowManager.RemoveElement(inputCell, consume);
-                                contentMass = conduitContents.mass;
-                                lastConsumedElement = conduitContents.element;
-                            }
-                            bool elementHasCapTag = element.HasTag(capacityTag);
-                            if (contentMass > 0f && capacityTag != GameTags.Any && !elementHasCapTag)
-                            {
-                                base.Trigger((int)GameHashes.DoBuildingDamage, new BuildingHP.DamageSourceInfo
-                                {
-                                    damage = 1,
-                                    source = BUILDINGS.DAMAGESOURCES.BAD_INPUT_ELEMENT,
-                                    popString = UI.GAMEOBJECTEFFECTS.DAMAGE_POPS.WRONG_ELEMENT
-                                });
-                            }
-                            if (elementHasCapTag || wrongElementResult == ConduitConsumer.WrongElementResult.Store || contents.element == SimHashes.Vacuum || capacityTag == GameTags.Any)
-                            {
-                                if (contentMass > 0f)
-                                {
-                                    consumedLastTick = false;
-                                    int disease_count = (int)((float)contents.diseaseCount * (contentMass / contents.mass));
-                                    Element element2 = ElementLoader.FindElementByHash(contents.element);
-                                    ConduitType conduitType = inPortInfo.conduitType;
-                                    if (conduitType != ConduitType.Gas)
-                                    {
-                                        if (conduitType == ConduitType.Liquid)
-                                        {
-                                            if (element2.IsLiquid)
-                                            {
-                                                storage.AddLiquid(contents.element, contentMass, contents.temperature, contents.diseaseIdx, disease_count, keepZeroMassObject, false);
-                                            }
-                                            else
-                                            {
-                                                global::Debug.LogWarning("Liquid conduit consumer consuming non liquid: " + element2.id.ToString());
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (element2.IsGas)
-                                        {
-                                            storage.AddGasChunk(contents.element, contentMass, contents.temperature, contents.diseaseIdx, disease_count, keepZeroMassObject, false);
-                                        }
-                                        else
-                                        {
-                                            global::Debug.LogWarning("Gas conduit consumer consuming non gas: " + element2.id.ToString());
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if (contentMass > 0f)
-                                {
-                                    consumedLastTick = false;
-                                    bool flag11 = wrongElementResult == ConduitConsumer.WrongElementResult.Dump;
-                                    if (flag11)
-                                    {
-                                        int disease_count2 = (int)((float)contents.diseaseCount * (contentMass / contents.mass));
-                                        int gameCell = Grid.PosToCell(base.transform.GetPosition());
-                                        SimMessages.AddRemoveSubstance(gameCell, contents.element, CellEventLogger.Instance.ConduitConsumerWrongElement, contentMass, contents.temperature, contents.diseaseIdx, disease_count2, true, -1);
-                                    }
-                                }
-                            }
+                            case ConduitType.Gas:
+                            case ConduitType.Liquid:
+                                ProcessFluidInFlow(dt);
+                                break;
+                            case ConduitType.Solid:
+                                ProcessSolidFlow(dt);
+                                break;
                         }
                     }
                 }
             }
 
         }
-        
+        private void ProcessSolidFlow(float dt)
+        {
+            var flowMan = solidFlowManager;
+            var solidFlow = flowMan.GetContents(inputCell);
+            if (solidFlow.pickupableHandle.IsValid())
+            {
+                float availMass= (capacityTag != GameTags.Any) ? storage.GetMassAvailable(capacityTag) : storage.MassStored();
+                float minCap = Mathf.Min(storage.capacityKg, capacityKG);
+                float diff = Mathf.Max(0f, minCap - availMass);
+                if (diff > 0f)
+                {
+                    Pickupable pickupable = flowMan.GetPickupable(solidFlow.pickupableHandle);
+                    if (pickupable.PrimaryElement.Mass <= diff || pickupable.PrimaryElement.Mass > minCap)
+                    {
+                        Pickupable pickupable2 = flowMan.RemovePickupable(inputCell);
+                        if (pickupable2)
+                        {
+                            storage.Store(pickupable2.gameObject, true, false, true, false);
+                            //flag = true;
+                        }
+                    }
+                }
+            }
+        }
+        private void ProcessFluidInFlow(float dt)
+        {
+            ConduitFlow flowManager = fluidFlowManager;
+            IsSatisfied = false;
+            consumedLastTick = true;
+            ConduitFlow.ConduitContents contents = flowManager.GetContents(inputCell);
+            if (contents.mass > 0f)
+            {
+                IsSatisfied = true;
+                float consume = consumptionRate * dt;
+                consume = Mathf.Min(consume, space_remaining_kg);
+                Element element = ElementLoader.FindElementByHash(contents.element);
+                //if (contents.element != lastConsumedElement)
+                //{
+                //    DiscoveredResources.Instance.Discover(element.tag, element.materialCategory);
+                //}
+                float contentMass = 0f;
+                if (consume > 0f)
+                {
+                    ConduitFlow.ConduitContents conduitContents = flowManager.RemoveElement(inputCell, consume);
+                    contentMass = conduitContents.mass;
+                    lastConsumedElement = conduitContents.element;
+                }
+                bool elementHasCapTag = element.HasTag(capacityTag);
+                if (contentMass > 0f && capacityTag != GameTags.Any && !elementHasCapTag)
+                {
+                    base.Trigger((int)GameHashes.DoBuildingDamage, new BuildingHP.DamageSourceInfo
+                    {
+                        damage = 1,
+                        source = BUILDINGS.DAMAGESOURCES.BAD_INPUT_ELEMENT,
+                        popString = UI.GAMEOBJECTEFFECTS.DAMAGE_POPS.WRONG_ELEMENT
+                    });
+                }
+                if (elementHasCapTag || wrongElementResult == ConduitConsumer.WrongElementResult.Store || contents.element == SimHashes.Vacuum || capacityTag == GameTags.Any)
+                {
+                    if (contentMass > 0f)
+                    {
+                        consumedLastTick = false;
+                        int disease_count = (int)((float)contents.diseaseCount * (contentMass / contents.mass));
+                        Element element2 = ElementLoader.FindElementByHash(contents.element);
+                        ConduitType conduitType = inPortInfo.conduitType;
+                        if (conduitType != ConduitType.Gas)
+                        {
+                            if (conduitType == ConduitType.Liquid)
+                            {
+                                if (element2.IsLiquid)
+                                {
+                                    storage.AddLiquid(contents.element, contentMass, contents.temperature, contents.diseaseIdx, disease_count, keepZeroMassObject, false);
+                                }
+                                else
+                                {
+                                    global::Debug.LogWarning("Liquid conduit consumer consuming non liquid: " + element2.id.ToString());
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (element2.IsGas)
+                            {
+                                storage.AddGasChunk(contents.element, contentMass, contents.temperature, contents.diseaseIdx, disease_count, keepZeroMassObject, false);
+                            }
+                            else
+                            {
+                                global::Debug.LogWarning("Gas conduit consumer consuming non gas: " + element2.id.ToString());
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (contentMass > 0f)
+                    {
+                        consumedLastTick = false;
+                        bool flag11 = wrongElementResult == ConduitConsumer.WrongElementResult.Dump;
+                        if (flag11)
+                        {
+                            int disease_count2 = (int)((float)contents.diseaseCount * (contentMass / contents.mass));
+                            int gameCell = Grid.PosToCell(base.transform.GetPosition());
+                            SimMessages.AddRemoveSubstance(gameCell, contents.element, CellEventLogger.Instance.ConduitConsumerWrongElement, contentMass, contents.temperature, contents.diseaseIdx, disease_count2, true, -1);
+                        }
+                    }
+                }
+            }
+        }
         public float space_remaining_kg
         {
             get
@@ -411,7 +447,17 @@ namespace QuantumCompressors.BuildingComponents
 
         private void UpdateOutConduitBlockedStatus()
         {
-            bool isConEmpty = fluidFlowManager.IsConduitEmpty(filteredCell);
+            bool isConEmpty=false;
+            switch (outPortInfo.conduitType)
+            {
+                case ConduitType.Gas:
+                case ConduitType.Liquid:
+                    isConEmpty = fluidFlowManager.IsConduitEmpty(filteredCell);
+                    break;
+                case ConduitType.Solid:
+                    isConEmpty = solidFlowManager.IsConduitEmpty(filteredCell);
+                    break;
+            }
             StatusItem conduitBlockedMultiples = Db.Get().BuildingStatusItems.ConduitBlockedMultiples;
             bool statIdSet = conduitBlockedStatusItemGuid != Guid.Empty;
             if (isConEmpty == statIdSet)

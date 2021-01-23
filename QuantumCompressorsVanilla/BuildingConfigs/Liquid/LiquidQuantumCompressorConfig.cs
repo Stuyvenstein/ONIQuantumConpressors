@@ -47,7 +47,7 @@ namespace QuantumCompressors.BuildingConfigs.Liquid
 			this.storage = storage;
 			go.AddOrGet<SmartReservoir>();
 			var qs = go.AddComponent<QuantumStorage>();
-			qs.conduitType = ConduitType.Liquid ;
+			qs.conduitType = conduitType;
 		}
 
 		public override void DoPostConfigureUnderConstruction(GameObject go)

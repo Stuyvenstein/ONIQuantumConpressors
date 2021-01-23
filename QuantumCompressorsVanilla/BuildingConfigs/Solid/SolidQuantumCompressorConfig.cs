@@ -43,8 +43,12 @@ namespace QuantumCompressors.BuildingConfigs.Solid
 			buildingDef.LogicOutputPorts = list;
 			return buildingDef;
 		}
-
-		// Token: 0x06000CDA RID: 3290 RVA: 0x00049D2C File Offset: 0x00047F2C
+		public override void DoPostConfigureUnderConstruction(GameObject go)
+		{
+			var quc = go.AddComponent<QuantumStorageTracker>();
+			quc.conduitType = conduitType;
+		}
+		
 		public override void DoPostConfigureComplete(GameObject go)
 		{
 			SoundEventVolumeCache.instance.AddVolume("storagelocker_kanim", "StorageLocker_Hit_metallic_low", NOISE_POLLUTION.NOISY.TIER1);
@@ -64,61 +68,14 @@ namespace QuantumCompressors.BuildingConfigs.Solid
 			copyBuildingSettings.copyGroupTag = GameTags.StorageLocker;
 			go.AddOrGet<StorageLockerSmart>();
 			go.AddOrGet<UserNameable>();
+			var qs = go.AddComponent<QuantumStorage>();
+			qs.conduitType = conduitType;
+			var quc = go.AddComponent<QuantumStorageTracker>();
+			quc.conduitType = conduitType;
 			go.AddOrGetDef<StorageController.Def>();
 			//var qs = go.AddComponent<QuantumGasStorage>();
 			//qs.conduitType = conduitType;
 		}
 
-		// Token: 0x040006A0 RID: 1696
-		//public const string ID = "StorageLockerSmart";
-		//public override BuildingDef CreateBuildingDef()
-		//{
-		//	BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 5, 3, "gasstorage_kanim", 100, 120f, TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER4, MATERIALS.ALL_METALS, 800f, BuildLocationRule.OnFloor, TUNING.BUILDINGS.DECOR.PENALTY.TIER1, NOISE_POLLUTION.NOISY.TIER0, 0.2f);
-		//	buildingDef.Floodable = false;
-		//	buildingDef.InputConduitType = conduitType;
-		//	buildingDef.OutputConduitType = conduitType;
-		//	buildingDef.ViewMode = OverlayModes.LiquidConduits.ID;
-		//	buildingDef.AudioCategory = "HollowMetal";
-		//	buildingDef.OnePerWorld = true;
-		//	buildingDef.UtilityInputOffset = new CellOffset(1, 2);
-		//	buildingDef.UtilityOutputOffset = new CellOffset(0, 0);
-		//	List<LogicPorts.Port> list = new List<LogicPorts.Port>();
-		//	list.Add(LogicPorts.Port.OutputPort(PORT_ID, new CellOffset(0, 0), STRINGS.BUILDINGS.PREFABS.SMARTRESERVOIR.LOGIC_PORT, STRINGS.BUILDINGS.PREFABS.SMARTRESERVOIR.LOGIC_PORT_ACTIVE, STRINGS.BUILDINGS.PREFABS.SMARTRESERVOIR.LOGIC_PORT_INACTIVE, false, false));
-		//	buildingDef.LogicOutputPorts = list;
-		//	GeneratedBuildings.RegisterWithOverlay(OverlayScreen.SolidConveyorIDs, ID);
-		//	return buildingDef;
-		//}
-		//public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
-		//{
-		//	go.AddOrGet<Reservoir>();
-		//	go.GetComponent<KPrefabID>().AddTag(GameTags.UniquePerWorld, false);
-		//	Storage storage = BuildingTemplates.CreateDefaultStorage(go, false);
-		//	storage.showDescriptor = true;
-		//	storage.storageFilters = STORAGEFILTERS.NOT_EDIBLE_SOLIDS;
-		//	storage.capacityKg = 1500f;
-		//	List<Storage.StoredItemModifier> ReservoirStoredItemModifiers = new List<Storage.StoredItemModifier>();
-		//	ReservoirStoredItemModifiers.Add(Storage.StoredItemModifier.Hide);
-		//	ReservoirStoredItemModifiers.Add(Storage.StoredItemModifier.Seal);
-		//	storage.SetDefaultStoredItemModifiers(ReservoirStoredItemModifiers);
-		//	storage.showCapacityStatusItem = true;
-		//	storage.showCapacityAsMainStatus = true;
-		//	go.AddOrGet<SmartReservoir>();
-		//	ConduitConsumer conduitConsumer = go.AddOrGet<ConduitConsumer>();
-		//	conduitConsumer.conduitType = conduitType;
-		//	conduitConsumer.ignoreMinMassCheck = true;
-		//	conduitConsumer.forceAlwaysSatisfied = true;
-		//	conduitConsumer.alwaysConsume = true;
-		//	conduitConsumer.capacityKG = storage.capacityKg;
-		//	ConduitDispenser conduitDispenser = go.AddOrGet<ConduitDispenser>();
-		//	conduitDispenser.conduitType = conduitType;
-		//	conduitDispenser.elementFilter = null;
-		//	var qs = go.AddOrGet<QuantumStorage>();
-		//	qs.conduitType = conduitType;
-		//}
-		//public override void DoPostConfigureComplete(GameObject go)
-		//{
-		//	go.AddOrGetDef<StorageController.Def>();
-		//	go.GetComponent<KPrefabID>().AddTag(GameTags.OverlayBehindConduits, false);
-		//}
 	}
 }

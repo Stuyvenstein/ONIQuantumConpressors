@@ -1,6 +1,7 @@
 ﻿using KSerialization;
 using QuantumCompressors.BuildingConfigs.Gas;
 using QuantumCompressors.BuildingConfigs.Liquid;
+using QuantumCompressors.BuildingConfigs.Solid;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +38,13 @@ namespace QuantumCompressors.BuildingComponents
                     }
                     Assets.BuildingDefs.Remove(storageSingleton.liquidCompBuildDef);
                     break;
+                case ConduitType.Solid:
+                    if (storageSingleton.solidCompBuildDef == null)
+                    {
+                        storageSingleton.solidCompBuildDef = Assets.GetBuildingDef(SolidQuantumCompressorConfig.ID);
+                    }
+                    Assets.BuildingDefs.Remove(storageSingleton.solidCompBuildDef);
+                    break;
             }
         }
         protected override void OnCleanUp()
@@ -52,6 +60,9 @@ namespace QuantumCompressors.BuildingComponents
                         break;
                     case ConduitType.Liquid:
                         Assets.BuildingDefs.Add(storageSingleton.liquidCompBuildDef);
+                        break;
+                    case ConduitType.Solid:
+                        Assets.BuildingDefs.Add(storageSingleton.solidCompBuildDef);
                         break;
                 }
             }
