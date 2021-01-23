@@ -67,15 +67,33 @@ namespace QuantumCompressors.BuildingComponents
         public Storage storage;
         [MyCmpReq]
         public Operational operational;
+        private QuantumStorageItem itemConfig;
         protected override void OnPrefabInit()
         {
             base.OnPrefabInit();
             
         }
+        protected override void OnCleanUp()
+        {
+            BuildingComplete com = GetComponent<BuildingComplete>();
+            QuantumStorageSingleton quantumStorage = QuantumStorageSingleton.Get();
+            quantumStorage.StorageItems.Remove(itemConfig);
+            base.OnCleanUp();
+        }
         protected override void OnSpawn()
         {
             base.OnSpawn();
-            name = "QuantumStorage" + Enum.GetName(typeof(ConduitType), conduitType);
+            BuildingComplete com = GetComponent<BuildingComplete>();
+            itemConfig = new QuantumStorageItem
+            {
+                worldId = com.GetMyWorldId(),
+                conduitType = conduitType,
+                operational = operational,
+                storage = storage
+            };
+            QuantumStorageSingleton quantumStorage = QuantumStorageSingleton.Get();
+            quantumStorage.StorageItems.Add(itemConfig);
+            //name = "QuantumStorage" + Enum.GetName(typeof(ConduitType), conduitType)+ com.GetMyWorldId().ToString();
         }
     }
 }

@@ -90,22 +90,32 @@ namespace QuantumCompressors.BuildingComponents
         }
         void TryUpdateStorage(bool force=false)
         {
-            var qStorGasComp = GameObject.Find("QuantumStorage" + Enum.GetName(typeof(ConduitType), outPortInfo.conduitType));
-            if (qStorGasComp != null)
+            BuildingComplete com = GetComponent<BuildingComplete>();
+            QuantumStorageSingleton storageSingleton = QuantumStorageSingleton.Get();
+            var storageItem = storageSingleton.StorageItems.Where(i => (i.conduitType == outPortInfo.conduitType && i.worldId == com.GetMyWorldId())).FirstOrDefault();
+            if (storageItem != null)
             {
-                var qStoreOp = qStorGasComp.GetComponent<Operational>();
-                if (qStoreOp != null)
-                {
-                    qStorageOperational = qStoreOp.IsOperational;
-                }
-                if (storage != null &&!force) return;
-                var storageComp = qStorGasComp.GetComponent<Storage>();
-                if (storageComp != null)
-                {
-                    storage = storageComp;
-                    capacityKG = storage.capacityKg;
-                }
+                qStorageOperational = storageItem.operational.IsOperational;
+                storage = storageItem.storage;
+                capacityKG = storageItem.storage.capacityKg;
             }
+
+            //var qStorGasComp = GameObject.Find("QuantumStorage" + Enum.GetName(typeof(ConduitType), outPortInfo.conduitType)+com.GetMyWorldId().ToString());
+            //if (qStorGasComp != null)
+            //{
+            //    var qStoreOp = qStorGasComp.GetComponent<Operational>();
+            //    if (qStoreOp != null)
+            //    {
+            //        qStorageOperational = qStoreOp.IsOperational;
+            //    }
+            //    if (storage != null &&!force) return;
+            //    var storageComp = qStorGasComp.GetComponent<Storage>();
+            //    if (storageComp != null)
+            //    {
+            //        storage = storageComp;
+            //        capacityKG = storage.capacityKg;
+            //    }
+            //}
             //if (storage == null) Debug.Log("Storage not found for " + nameof(QuantumElementFilter)+" on "+ "QuantumStorage" + Enum.GetName(typeof(ConduitType), portInfo.conduitType));
         }
         protected override void OnSpawn()
