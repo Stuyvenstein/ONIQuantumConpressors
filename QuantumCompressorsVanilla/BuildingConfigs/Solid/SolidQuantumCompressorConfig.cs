@@ -65,8 +65,8 @@ namespace QuantumCompressors.BuildingConfigs.Solid
 			go.AddOrGet<StorageLockerSmart>();
 			go.AddOrGet<UserNameable>();
 			go.AddOrGetDef<StorageController.Def>();
-			var qs = go.AddComponent<QuantumStorage>();
-			qs.conduitType = conduitType;
+			//var qs = go.AddComponent<QuantumGasStorage>();
+			//qs.conduitType = conduitType;
 		}
 
 		// Token: 0x040006A0 RID: 1696

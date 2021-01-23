@@ -16,6 +16,7 @@ namespace QuantumCompressors
             Strings.Add(new string[] { "STRINGS.BUILDINGS.PREFABS." + upperCaseID + ".DESC", structureDesc });
             Strings.Add(new string[] { "STRINGS.BUILDINGS.PREFABS." + upperCaseID + ".EFFECT", structureEffect });
             ModUtil.AddBuildingToPlanScreen(structureCategory, structureId);
+            
         }
 
         public static void AddStructureTech(Db db,string techCategory, string structureId)
@@ -23,22 +24,6 @@ namespace QuantumCompressors
             List<string> techs = new List<string>((string[])Database.Techs.TECH_GROUPING[techCategory]);
             techs.Add(structureId);
             Database.Techs.TECH_GROUPING[techCategory] = techs.ToArray();
-            //var techs = db.Techs.TryGet(techName);
-            //if (techs == null)
-            //{
-            //    Debug.LogError($"No tech {techName} found!");
-            //}
-            //else
-            //{
-            //    techs.unlockedItemIDs.Add(buildingId);
-            //}
-
-
-            //var tec = db.Techs.resources.Where(t => t.Id == techCategory).FirstOrDefault();
-            //if (tec != null)
-            //{
-            //    tec.unlockedItemIDs.Add(structureId);
-            //}
         }
 
     }

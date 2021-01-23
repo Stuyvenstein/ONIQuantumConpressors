@@ -12,12 +12,6 @@ namespace QuantumCompressors.BuildingComponents
     [AddComponentMenu("KMonoBehaviour/scripts/"+ nameof(QuantumElementFilter))]
     public class QuantumElementFilter :KMonoBehaviour, ISaveLoadable //, ISecondaryOutput
     {
-        //private Guid needsConduitStatusItemGuid;
-        //private Guid conduitBlockedStatusItemGuid;
-        //private int inputCell = -1;
-        //private int outputCell = -1;
-        //private FlowUtilityNetwork.NetworkItem itemFilter;
-        //private HandleVector<int>.Handle partitionerEntry;
         [SerializeField]
         public ConduitPortInfo outPortInfo;
         [SerializeField]
@@ -66,18 +60,12 @@ namespace QuantumCompressors.BuildingComponents
         private static StatusItem filterStatusItem = null;
         public ConduitConsumer.WrongElementResult wrongElementResult = ConduitConsumer.WrongElementResult.Destroy;
         private int elementOutputOffset = 0;
-        //private static readonly Operational.Flag outputConduitFlag = new Operational.Flag("output_conduit", Operational.Flag.Type.Functional);
-        //private static readonly Operational.Flag inputConduitFlag = new Operational.Flag("input_conduit", Operational.Flag.Type.Functional);
         private static readonly Operational.Flag storageExistsFlag = new Operational.Flag("storage_avail", Operational.Flag.Type.Requirement);
-        //private static readonly Operational.Flag isOperationalFlag = new Operational.Flag("power_oper", Operational.Flag.Type.Functional);
-        //private static readonly Operational.Flag storageOperationalFlag = new Operational.Flag("storage_op", Operational.Flag.Type.Functional);
-        //private static readonly Operational.Flag outputConduitFlag = new Operational.Flag("output_conduit", Operational.Flag.Type.Functional);
         SolidConduitFlow solidFlowManager{get{return SolidConduit.GetFlowManager();}}
         ConduitFlow fluidFlowManager{get{return Conduit.GetFlowManager(outPortInfo.conduitType);}}
         public void SetStorageOnState(bool onState){storageOnState = onState;}
-        //public Storage Storage { get { return storage; } }
-        //public ConduitType ConduitType { get { return outPortInfo.conduitType; } }
         private bool qStorageOperational = false;
+        QuantumStorageSingleton singletonStorage = QuantumStorageSingleton.Get();
         public int GetFilteredCell()
         {
             return filteredCell;
@@ -90,23 +78,15 @@ namespace QuantumCompressors.BuildingComponents
         }
         void TryUpdateStorage(bool force=false)
         {
-            var qStorGasComp = GameObject.Find("QuantumStorage" + Enum.GetName(typeof(ConduitType), outPortInfo.conduitType));
-            if (qStorGasComp != null)
+            QuantumStorageSingleton storageSingleton = QuantumStorageSingleton.Get();
+            var storageItem = storageSingleton.StorageItems.Where(i => i.conduitType == outPortInfo.conduitType).FirstOrDefault();
+            if (storageItem != null)
             {
-                var qStoreOp = qStorGasComp.GetComponent<Operational>();
-                if (qStoreOp != null)
-                {
-                    qStorageOperational = qStoreOp.IsOperational;
-                }
-                if (storage != null &&!force) return;
-                var storageComp = qStorGasComp.GetComponent<Storage>();
-                if (storageComp != null)
-                {
-                    storage = storageComp;
-                    capacityKG = storage.capacityKg;
-                }
+                qStorageOperational = storageItem.operational.IsOperational;
+                storage = storageItem.storage;
+                capacityKG = storageItem.storage.capacityKg;
             }
-            //if (storage == null) Debug.Log("Storage not found for " + nameof(QuantumElementFilter)+" on "+ "QuantumStorage" + Enum.GetName(typeof(ConduitType), portInfo.conduitType));
+
         }
         protected override void OnSpawn()
         {
@@ -294,97 +274,7 @@ namespace QuantumCompressors.BuildingComponents
             }
 
         }
-        //private void OnConduitTickIn(float dt)
-        //{
-        //    TryUpdateStorage();
-        //    bool hasInConn = useInput ? IsInConnected : false;
-        //    if (storage == null && storageOnState) SetStorageOnState(false);
-        //    else if (storage != null && !storageOnState) SetStorageOnState(true);
-        //    if (hasInConn && storageOnState&& qStorageOperational&&useInput)//&&operational.IsOperational
-        //    {
-        //        if (!operational.IsOperational) operational.SetActive(true);
-        //        IsSatisfied = false;
-        //        consumedLastTick = true;
-        //            ConduitFlow.ConduitContents contents = fluidFlowManager.GetContents(inputCell);
-        //            if (contents.mass > 0f)
-        //            {
-        //                IsSatisfied = true;
-        //                    float consume = consumptionRate * dt;
-        //                    consume = Mathf.Min(consume, space_remaining_kg);
-        //                    Element element = ElementLoader.FindElementByHash(contents.element);
-        //                    if (contents.element != lastConsumedElement)
-        //                    {
-        //                        DiscoveredResources.Instance.Discover(element.tag, element.materialCategory);
-        //                    }
-        //            float contentMass = 0f;
-        //                    if (consume > 0f)
-        //                    {
-        //                        ConduitFlow.ConduitContents conduitContents = fluidFlowManager.RemoveElement(inputCell, consume);
-        //                contentMass = conduitContents.mass;
-        //                        lastConsumedElement = conduitContents.element;
-        //                    }
-        //                    bool elementHasCapTag = element.HasTag(capacityTag);
-        //                    if (contentMass > 0f && capacityTag != GameTags.Any && !elementHasCapTag)
-        //                    {
-        //                        base.Trigger((int)GameHashes.DoBuildingDamage, new BuildingHP.DamageSourceInfo
-        //                        {
-        //                            damage = 1,
-        //                            source = BUILDINGS.DAMAGESOURCES.BAD_INPUT_ELEMENT,
-        //                            popString = UI.GAMEOBJECTEFFECTS.DAMAGE_POPS.WRONG_ELEMENT
-        //                        });
-        //                    }
-        //                    if (elementHasCapTag || wrongElementResult == ConduitConsumer.WrongElementResult.Store || contents.element == SimHashes.Vacuum || capacityTag == GameTags.Any)
-        //                    {
-        //                        if (contentMass > 0f)
-        //                        {
-        //                            consumedLastTick = false;
-        //                            int disease_count = (int)((float)contents.diseaseCount * (contentMass / contents.mass));
-        //                            Element element2 = ElementLoader.FindElementByHash(contents.element);
-        //                            ConduitType conduitType = inPortInfo.conduitType;
-        //                            if (conduitType != ConduitType.Gas)
-        //                            {
-        //                                if (conduitType == ConduitType.Liquid)
-        //                                {
-        //                                    if (element2.IsLiquid)
-        //                                    {
-        //                                        storage.AddLiquid(contents.element, contentMass, contents.temperature, contents.diseaseIdx, disease_count, keepZeroMassObject, false);
-        //                                    }
-        //                                    else
-        //                                    {
-        //                                        global::Debug.LogWarning("Liquid conduit consumer consuming non liquid: " + element2.id.ToString());
-        //                                    }
-        //                                }
-        //                            }
-        //                            else
-        //                            {
-        //                                if (element2.IsGas)
-        //                                {
-        //                                    storage.AddGasChunk(contents.element, contentMass, contents.temperature, contents.diseaseIdx, disease_count, keepZeroMassObject, false);
-        //                                }
-        //                                else
-        //                                {
-        //                                    global::Debug.LogWarning("Gas conduit consumer consuming non gas: " + element2.id.ToString());
-        //                                }
-        //                            }
-        //                        }
-        //                    }
-        //                    else
-        //                    {
-        //                        if (contentMass > 0f)
-        //                        {
-        //                            consumedLastTick = false;
-        //                            bool flag11 = wrongElementResult == ConduitConsumer.WrongElementResult.Dump;
-        //                            if (flag11)
-        //                            {
-        //                                int disease_count2 = (int)((float)contents.diseaseCount * (contentMass / contents.mass));
-        //                                int gameCell = Grid.PosToCell(base.transform.GetPosition());
-        //                                SimMessages.AddRemoveSubstance(gameCell, contents.element, CellEventLogger.Instance.ConduitConsumerWrongElement, contentMass, contents.temperature, contents.diseaseIdx, disease_count2, true, -1);
-        //                            }
-        //                        }
-        //                    }
-        //            }
-        //    }
-        //}
+        
         public float space_remaining_kg
         {
             get
@@ -502,28 +392,6 @@ namespace QuantumCompressors.BuildingComponents
             get
             {
 
-                //bool isOutConnected = RequireOutputs.IsConnected(filteredCell, outPortInfo.conduitType);
-                //StatusItem status_item;
-                //switch (outPortInfo.conduitType)
-                //{
-                //    case ConduitType.Gas:
-                //        status_item = Db.Get().BuildingStatusItems.NeedGasOut;
-                //        break;
-                //    case ConduitType.Liquid:
-                //        status_item = Db.Get().BuildingStatusItems.NeedLiquidOut;
-                //        break;
-                //    case ConduitType.Solid:
-                //        status_item = Db.Get().BuildingStatusItems.NeedSolidOut;
-                //        break;
-                //    default:
-                //        throw new ArgumentOutOfRangeException();
-                //}
-                //bool reqConStatId = needsConduitStatusItemGuid != Guid.Empty;
-                //if (isOutConnected == reqConStatId)
-                //{
-                //    needsConduitStatusItemGuid = selectable.ToggleStatusItem(status_item, needsConduitStatusItemGuid, !isOutConnected, null);
-                //}
-
                 GameObject gameObject = null;
                 switch (outPortInfo.conduitType)
                 {
@@ -537,10 +405,7 @@ namespace QuantumCompressors.BuildingComponents
                         gameObject = Grid.Objects[filteredCell, (int)ObjectLayer.SolidConduit];
                         break;
                 }
-                return (gameObject != null && gameObject.GetComponent<BuildingComplete>() != null); //isOutConnected && 
-                //bool isConnChk=RequireOutputs.IsConnected(filteredCell, portInfo.conduitType);
-                //bool isConnOk = gameObject != null && gameObject.GetComponent<BuildingComplete>() != null;
-                //return isConnOk && isConnChk==true;
+                return (gameObject != null && gameObject.GetComponent<BuildingComplete>() != null);
             }
         }
 

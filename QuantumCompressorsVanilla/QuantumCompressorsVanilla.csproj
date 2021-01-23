@@ -63,6 +63,8 @@
     <Compile Include="BuildingComponents\QuantumConduitConsumer.cs" />
     <Compile Include="BuildingComponents\QuantumElementFilter.cs" />
     <Compile Include="BuildingComponents\QuantumStorage.cs" />
+    <Compile Include="BuildingComponents\QuantumStorageSingleton.cs" />
+    <Compile Include="BuildingComponents\QuantumStorageTracker.cs" />
     <Compile Include="BuildingConfigs\Gas\GasCompressorIntakeConfig.cs" />
     <Compile Include="BuildingConfigs\Gas\GasQuantumCompressorConfig.cs" />
     <Compile Include="BuildingConfigs\Gas\GasQuantumFilterDualConfig.cs" />

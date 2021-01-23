@@ -19,10 +19,6 @@ namespace QuantumCompressors.BuildingConfigs.Gas
         public static string PORT_ID = "GasQuantumCompressorLogicPort";
         private const ConduitType conduitType = ConduitType.Gas;
 
-
-        // .Append(SimHashes.SuperInsulator.ToString()).Append(SimHashes.Polypropylene.ToString()).Append(SimHashes.Steel.ToString());
-        //private ConduitPortInfo outputPort = new ConduitPortInfo(conduitType, new CellOffset(0, 0));
-        //private ConduitPortInfo inputPort = new ConduitPortInfo(conduitType, new CellOffset(1, 2));
         public override BuildingDef CreateBuildingDef()
         {
             //List<string> constrMats = new List<string>();
@@ -34,10 +30,7 @@ namespace QuantumCompressors.BuildingConfigs.Gas
             buildingDef.RequiresPowerInput = true;
             buildingDef.EnergyConsumptionWhenActive = QuantumStorage.QuantumStoragePowerConsume;
             buildingDef.AudioCategory = "HollowMetal";
-            //buildingDef.RequiredDlcId = "EXPANSION1_ID";
-            //buildingDef.OnePerWorld = true;
-            //buildingDef.UtilityInputOffset = inputPort.offset;
-            //buildingDef.UtilityOutputOffset = outputPort.offset;
+            
             List<LogicPorts.Port> list = new List<LogicPorts.Port>();
             list.Add(LogicPorts.Port.OutputPort(PORT_ID, new CellOffset(0, 0), STRINGS.BUILDINGS.PREFABS.SMARTRESERVOIR.LOGIC_PORT, STRINGS.BUILDINGS.PREFABS.SMARTRESERVOIR.LOGIC_PORT_ACTIVE, STRINGS.BUILDINGS.PREFABS.SMARTRESERVOIR.LOGIC_PORT_INACTIVE, false, false));
             buildingDef.LogicOutputPorts = list;
@@ -59,29 +52,23 @@ namespace QuantumCompressors.BuildingConfigs.Gas
             //storage.showCapacityStatusItem = true;
             //storage.showCapacityAsMainStatus = true;
             go.AddOrGet<SmartReservoir>();
-            //ConduitConsumer conduitConsumer = go.AddOrGet<ConduitConsumer>();
-            //conduitConsumer.conduitType = conduitType;
-            //conduitConsumer.ignoreMinMassCheck = true;
-            //conduitConsumer.forceAlwaysSatisfied = true;
-            //conduitConsumer.alwaysConsume = true;
-            //conduitConsumer.capacityKG = storage.capacityKg;
-            var qs = go.AddOrGet<QuantumStorage>();
-            qs.conduitType = conduitType;
-            //QuantumElementFilter elementFilter = go.AddComponent<QuantumElementFilter>();
-            //elementFilter.portInfo = outputPort;
-            //elementFilter.storage = storage;
-            //elementFilter.capacityKG = storage.capacityKg;
-            //elementFilter.alwaysDispense = true;
-
-            //Filterable filterable = go.AddOrGet<Filterable>();
-            //filterable.filterElementState = Filterable.ElementState.Gas;
-            //ConduitDispenser conduitDispenser = go.AddOrGet<ConduitDispenser>();
-            //conduitDispenser.conduitType = conduitType;
-            //conduitDispenser.elementFilter = null;
+            var qs=go.AddComponent<QuantumStorage>();
+            qs.conduitType = ConduitType.Gas;
         }
+
+        public override void DoPostConfigureUnderConstruction(GameObject go)
+        {
+            //Assets.BuildingDefs.Remove(Assets.GetBuildingDef(ID));
+            var quc = go.AddComponent<QuantumStorageTracker>();
+            quc.conduitType = conduitType;
+        }
+
         public override void DoPostConfigureComplete(GameObject go)
         {
+            var quc = go.AddComponent<QuantumStorageTracker>();
+            quc.conduitType = conduitType;
             //UnityEngine.Object.DestroyImmediate(go.GetComponent<ConduitConsumer>());
+            //quantumStorageSingleton.gass
             go.AddOrGetDef<StorageController.Def>();
             RequireInputs component = go.GetComponent<RequireInputs>();
             component.SetRequirements(true, false);

@@ -42,6 +42,7 @@ namespace QuantumCompressors.BuildingComponents
         public bool useSecondaryInput = false;
         [MyCmpReq]
         private Building building;
+        QuantumStorageSingleton singletonStorage = QuantumStorageSingleton.Get();
         private static readonly Operational.Flag storageExistsFlag = new Operational.Flag("storage_avail", Operational.Flag.Type.Requirement);
         public ConduitType ConduitType { get { return conduitType; } }
         public void SetConduitData(ConduitType type) { conduitType = type; }
@@ -91,23 +92,14 @@ namespace QuantumCompressors.BuildingComponents
         }
         void TryUpdateStorage(bool force = false)
         {
-            var qStorGasComp = GameObject.Find("QuantumStorage" + Enum.GetName(typeof(ConduitType), conduitType));
-            if (qStorGasComp != null)
+            QuantumStorageSingleton storageSingleton = QuantumStorageSingleton.Get();
+            var storageItem = storageSingleton.StorageItems.Where(i => i.conduitType == conduitType).FirstOrDefault();
+            if (storageItem != null)
             {
-                var operational = qStorGasComp.GetComponent<Operational>();
-                if (operational != null)
-                {
-                    remoteStorageActive = operational.IsOperational;
-                }
-                if (storage != null && !force) return;
-                var storageComp = qStorGasComp.GetComponent<Storage>();
-                if (storageComp != null)
-                {
-                    storage = storageComp;
-                    capacityKG = storage.capacityKg;
-                }
+                remoteStorageActive = storageItem.operational.IsOperational;
+                storage = storageItem.storage;
+                capacityKG = storageItem.storage.capacityKg;
             }
-            //if (storage == null) Debug.Log("Storage not found for "+nameof(QuantumConduitConsumer));
         }
         protected override void OnCleanUp()
         {
@@ -122,34 +114,6 @@ namespace QuantumCompressors.BuildingComponents
                 return storage;
             }
         }
-        //private Storage FetchRemoteStorage()
-        //{
-        //    Storage result = null;
-        //    switch (conduitType)
-        //    {
-        //        case ConduitType.Gas:
-        //            result= storageSingleton.gasStorage;
-        //            break;
-        //        case ConduitType.Liquid:
-        //            result = storageSingleton.liquidStorage;
-        //            break;
-        //    }
-        //    return result;
-        //}
-        //public bool RemoteStorageAvailable()
-        //{
-        //    bool result = false;
-        //    switch (conduitType)
-        //    {
-        //        case ConduitType.Gas:
-        //            result = storageSingleton.gasStorage != null;
-        //            break;
-        //        case ConduitType.Liquid:
-        //            result = storageSingleton.liquidStorage != null;
-        //            break;
-        //    }
-        //    return result;
-        //}
         #endregion
         public bool CanConsume //something in pipe
         {
