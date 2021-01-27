@@ -50,14 +50,14 @@ namespace QuantumCompressors.BuildingComponents
 
         public static float[] CompressorCost = new float[]
         {
-            2000f,
-            100f,
+            1200f,
+            200f,
             400f
         };
         public static string[] CompressorMats = new string[]
     {
-            MATERIALS.REFINED_METALS[0],
-            SimHashes.SuperInsulator.ToString(),
+            SimHashes.Steel.ToString(),
+            SimHashes.Tungsten.ToString(),
             MATERIALS.TRANSPARENTS[0]
     };
 
